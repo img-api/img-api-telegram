@@ -1,1 +1,0 @@
-config = {"API_HASH": "84e0008a344d610646130aee4eb720c3", "API_ID": "15888812"}
