@@ -128,5 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
 imgapi_config.py

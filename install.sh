@@ -7,8 +7,10 @@ sudo apt install software-properties-common
 
 echo "VIRTUAL ENV INSTALL"
 
-sudo apt-get install python3-venv    # If needed
+sudo apt-get install python3-venv  -y  # If needed
+
 python3 -m venv .venv
+
 source .venv/bin/activate
 
 

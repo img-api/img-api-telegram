@@ -1,5 +1,7 @@
 prompt_toolkit
 
-telethon
-asyncio
+requests
 
+git+https://github.com/sergioamr/img-api-python.git
+python-telegram-bot
+Image
