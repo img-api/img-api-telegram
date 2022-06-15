@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 imgapi_config.py
+content/

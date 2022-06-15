@@ -33,17 +33,35 @@ imgapi = None
 config = None
 
 galleries = {}
-def get_gallery(update, context):
+
+
+def get_gallery(update):
     tid = update.effective_chat.id
     if tid in galleries:
         return galleries[tid]
 
     gallery_def = {
         "my_telegram_id": update.effective_chat.id,
-        "title": update.effective_chat.title
+        "title": update.effective_chat.title,
+        "is_public": True,
     }
 
-    galleries[tid] = imgapi.create_gallery(gallery_def)
+    json = imgapi.create_gallery(gallery_def)
+
+    if 'galleries' in json:
+        gallery = json['galleries'][0]
+        galleries[tid] = gallery
+        print_b('BOT', " Gallery " + gallery['name'])
+        return gallery
+
+    return None
+
+
+def get_gallery_id(update):
+    gallery = get_gallery(update)
+    gid = gallery and gallery['id'] if 'id' in gallery else None
+    return gid
+
 
 def coms_send_notification(chat_id,
                            text,
@@ -100,12 +118,17 @@ def report(update, context):
 
 
 def text_event(update, context):
+    global imgapi
+
     user = update.message.from_user
     update.effective_chat.title
 
     last_comment = update.message.text
-    print_b(update.effective_chat.title, user.id, update.message.text)
-    gallery = get_gallery(update, context)
+    print_b(update.effective_chat.title,
+            str(user.id) + ":: " + update.message.text)
+
+    gallery = get_gallery(update)
+    return None
 
 
 def photo(update: Update, context: CallbackContext) -> int:
@@ -146,9 +169,10 @@ def photo(update: Update, context: CallbackContext) -> int:
     photo_file.download(media_file_name)
 
     try:
-        json_res = imgapi.api_upload([media_file_name])
+        gid = get_gallery_id(update)
+        json_res = imgapi.api_upload([media_file_name], gallery_id=gid)
     except Exception as e:
-        print(" Fialed creating user ")
+        print(" Fialed uploading image ")
 
     os.remove(media_file_name)
     return 1
@@ -214,12 +238,13 @@ def video(update: Update, context: CallbackContext) -> int:
 
     video_file.download(media_file_name)
 
-    os.remove(media_file_name)
-
     try:
-        json_res = imgapi.api_upload([media_file_name])
+        gid = get_gallery_id(update)
+        json_res = imgapi.api_upload([media_file_name], gallery_id=gid)
     except Exception as e:
-        print(" Fialed creating user ")
+        print(" Fialed uploading video ")
+
+    os.remove(media_file_name)
 
     return 1
 
