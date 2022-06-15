@@ -32,6 +32,18 @@ telegram_bot = None
 imgapi = None
 config = None
 
+galleries = {}
+def get_gallery(update, context):
+    tid = update.effective_chat.id
+    if tid in galleries:
+        return galleries[tid]
+
+    gallery_def = {
+        "my_telegram_id": update.effective_chat.id,
+        "title": update.effective_chat.title
+    }
+
+    galleries[tid] = imgapi.create_gallery(gallery_def)
 
 def coms_send_notification(chat_id,
                            text,
@@ -93,6 +105,7 @@ def text_event(update, context):
 
     last_comment = update.message.text
     print_b(update.effective_chat.title, user.id, update.message.text)
+    gallery = get_gallery(update, context)
 
 
 def photo(update: Update, context: CallbackContext) -> int:
