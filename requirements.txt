@@ -3,3 +3,6 @@ prompt_toolkit
 telethon
 asyncio
 
+setuptools
+cryptg
+pillow

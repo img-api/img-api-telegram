@@ -130,3 +130,6 @@ dmypy.json
 
 
 imgapi_config.py
+data
+
+name.session*
