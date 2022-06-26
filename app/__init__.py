@@ -7,7 +7,7 @@ imgapi = ImgAPI()
 
 print_h1("IMGAPI", "Bot Start")
 
-#api.setup("http://img-api.com/api", {})
-imgapi.setup("http://dev.img-api.com:5111/api", {})
+#imgapi.setup("http://dev.img-api.com:5111/api", {})
+imgapi.setup("https://img-api.com/api", {})
 
 user = imgapi.create_user(user_config)
