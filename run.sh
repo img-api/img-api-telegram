@@ -13,7 +13,7 @@ while true; do
     echo "------------ LAUNCH ----------"
     echo "------------------------------"
     echo " "
-    python3 imgapi.py
+    python3 imgapi_start.py
     sleep 60
 done
 

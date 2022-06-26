@@ -6,3 +6,7 @@ asyncio
 setuptools
 cryptg
 pillow
+
+git+https://github.com/sergioamr/img-api-python.git
+Image
+requests
