@@ -7,14 +7,11 @@ export LANG=C.UTF-8
 
 . .venv/bin/activate
 
-while true; do
     echo " "
     echo "------------------------------"
     echo "------------ LAUNCH ----------"
     echo "------------------------------"
     echo " "
     python3 imgapi_start.py
-    sleep 60
-done
 
 $SHELL

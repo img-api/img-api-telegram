@@ -1,5 +1,7 @@
 import os
+import sys
 import time
+import json
 
 from .print_helper import *
 
@@ -12,6 +14,7 @@ from app.file_helper import ensure_dir
 
 galleries = {}
 
+
 def get_gallery(imgapi, update):
     tid = update.effective_chat.id
     if tid in galleries:
@@ -23,10 +26,10 @@ def get_gallery(imgapi, update):
         "is_public": True,
     }
 
-    json = imgapi.create_gallery(gallery_def)
+    ret = imgapi.create_gallery(gallery_def)
 
-    if 'galleries' in json:
-        gallery = json['galleries'][0]
+    if 'galleries' in ret:
+        gallery = ret['galleries'][0]
         galleries[tid] = gallery
         print_b('BOT', " Gallery " + gallery['name'])
         return gallery
@@ -39,8 +42,21 @@ def get_gallery_id(imgapi, update):
     gid = gallery and gallery['id'] if 'id' in gallery else None
     return gid
 
+def read_state():
+    try:
+        with open('imgapi_state.json', 'r') as f:
+            return json.load(f)
+
+    except Exception as e:
+        return {}
+
+def save_state(cfg):
+    with open('imgapi_state.json', 'w', encoding='utf-8') as f:
+        json.dump(cfg, f, ensure_ascii=False, indent=4)
 
 def telegram_init(cfg, imgapi):
+    state = read_state()
+
     client = TelegramClient('name', cfg['API_ID'], cfg['API_HASH'])
 
     client.connect()
@@ -66,7 +82,7 @@ def telegram_init(cfg, imgapi):
     offset = 0
 
     b_exit = False
-    limit = 10
+    limit = 50
 
     data_folder = "data/"
     channel_name = "oinktv"
@@ -74,10 +90,17 @@ def telegram_init(cfg, imgapi):
     channel_folder = "data/" + channel_name
     ensure_dir(channel_folder)
 
+    offset_id = 0
+    if 'last_message_id' in state:
+        offset_id = state['last_message_id']
+
     while not b_exit:
         messages = client.get_messages(oink_channel,
-                                       limit=limit,
-                                       add_offset=offset)
+                                        limit=limit,
+                                        offset_id=offset_id)
+
+        offset_id = messages[-1].id
+
         for msg in reversed(messages):
             # Format the message content
 
@@ -91,7 +114,8 @@ def telegram_init(cfg, imgapi):
                 media_folder = channel_folder + "/" + str(msg.id) + "/"
                 if os.path.exists(media_folder):
                     print(" Found folder " + media_folder)
-                    time.sleep(1)
+                    state['last_message_id'] = msg.id
+                    save_state(state)
                     continue
 
                 ensure_dir(media_folder)
@@ -108,10 +132,15 @@ def telegram_init(cfg, imgapi):
                     if not 'media_files' in res:
                         print_b("Upload")
                         json_res = imgapi.api_upload([path], gallery_id=None)
+                        time.sleep(1)
                     else:
                         print_r("Duplicated")
+                        sys.exit()
 
                     os.remove(path)
+
+                    state['last_message_id'] = msg.id
+                    save_state(state)
 
                 except Exception as e:
                     print(" Fialed uploading video ")
@@ -126,8 +155,6 @@ def telegram_init(cfg, imgapi):
             else:
                 # Unknown message, simply print its class name
                 content = type(msg).__name__
-
-            time.sleep(5)
 
         offset += limit
         time.sleep(5)
