@@ -88,9 +88,8 @@ def telegram_init(cfg, imgapi):
     ensure_dir(channel_folder)
 
     offset_id = 0
-    if 'full_fetch' in state:
-        if 'last_message_id' in state:
-            offset_id = state['last_message_id']
+    if 'last_message_id' in state:
+        offset_id = state['last_message_id']
 
     b_exit=False
     while not b_exit:
