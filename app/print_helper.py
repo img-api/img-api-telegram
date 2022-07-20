@@ -16,7 +16,8 @@ g_debug_header = None
 
 import shutil
 
-DIS_WIDE=25
+DIS_WIDE = 25
+
 
 def get_timestamp(d=None):
     if not d:
@@ -25,7 +26,9 @@ def get_timestamp(d=None):
     unixtime = time.mktime(d.timetuple())
     return int(unixtime)
 
+
 last_refresh = get_timestamp()
+
 
 def get_tm():
     return "[" + str(get_timestamp()) + "] "
@@ -48,8 +51,9 @@ def get_logger(log, text):
     my_logger.setLevel(logging.DEBUG)
 
     ARM_LOG = '/home/smartinez/logs_bot/chat_%s.log' % log_name
-    handler = logging.handlers.RotatingFileHandler(
-        ARM_LOG, maxBytes=4*1024*1024, backupCount=5)
+    handler = logging.handlers.RotatingFileHandler(ARM_LOG,
+                                                   maxBytes=4 * 1024 * 1024,
+                                                   backupCount=5)
 
     my_logger.addHandler(handler)
     loggers[log_name] = my_logger
@@ -95,36 +99,46 @@ def get_time_HHMMSS(value):
     except ValueError:
         return "00:00:00"
 
-    h = math.floor(value/(60*60))
-    m = math.floor((value/60))%60
-    s = math.floor(value)%60
+    h = math.floor(value / (60 * 60))
+    m = math.floor((value / 60)) % 60
+    s = math.floor(value) % 60
 
     ret = ""
-    if (h<10):
-        ret+="0" + str(h)
+    if (h < 10):
+        ret += "0" + str(h)
     else:
-        ret+=str(h)
+        ret += str(h)
 
-    ret+=":"
-    if (m<10):
-        ret+="0" + str(m)
+    ret += ":"
+    if (m < 10):
+        ret += "0" + str(m)
     else:
-        ret+=str(m)
+        ret += str(m)
 
-    ret+=":"
-    if (s<10):
-        ret+="0" + str(s)
+    ret += ":"
+    if (s < 10):
+        ret += "0" + str(s)
     else:
-        ret+=str(s)
+        ret += str(s)
 
     return ret
 
 
 def month_string_to_number(string):
-    m = { 'jan': 1, 'feb': 2, 'mar': 3,
-        'apr':4, 'may':5, 'jun':6,
-         'jul':7, 'aug':8, 'sep':9,
-         'oct':10, 'nov':11, 'dec':12 }
+    m = {
+        'jan': 1,
+        'feb': 2,
+        'mar': 3,
+        'apr': 4,
+        'may': 5,
+        'jun': 6,
+        'jul': 7,
+        'aug': 8,
+        'sep': 9,
+        'oct': 10,
+        'nov': 11,
+        'dec': 12
+    }
 
     s = string.strip()[:3].lower()
     try:
@@ -132,6 +146,7 @@ def month_string_to_number(string):
         return out
     except:
         raise ValueError('Not a month')
+
 
 def get_timestamp_verbose(str):
     try:
@@ -152,36 +167,36 @@ def get_timestamp_verbose(str):
         return now
 
     if str == "month":
-        return now - 31*24*60*60
+        return now - 31 * 24 * 60 * 60
 
     regex = re.compile(r"(\d+) month")
     months = regex.search(str)
     if months:
-        return now - 31*24*60*60 * int(months.group(1))
+        return now - 31 * 24 * 60 * 60 * int(months.group(1))
 
     if str == "week":
-        return now - 7*24*60*60
+        return now - 7 * 24 * 60 * 60
 
     regex = re.compile(r"(\d+) week")
     weeks = regex.search(str)
     if weeks:
-        return now - 7*24*60*60 * int(weeks.group(1))
+        return now - 7 * 24 * 60 * 60 * int(weeks.group(1))
 
     if str == "day":
-        return now - 24*60*60
+        return now - 24 * 60 * 60
 
     regex = re.compile(r"(\d+) day")
     days = regex.search(str)
     if days:
-        return now - 24*60*60 * int(days.group(1))
+        return now - 24 * 60 * 60 * int(days.group(1))
 
     if str == "hour":
-        return now - 60*60
+        return now - 60 * 60
 
     regex = re.compile(r"(\d+) hour")
     hours = regex.search(str)
     if hours:
-        return now - 60*60 * int(hours.group(1))
+        return now - 60 * 60 * int(hours.group(1))
 
     if str == "minute":
         return now - 60
@@ -208,6 +223,7 @@ class bcolors:
 
 def vt_clear():
     sys.stdout.write('\033[2J')
+
 
 # http://ascii-table.com/ansi-escape-sequences.php
 def vt_set_scroll(row_start, row_end):
@@ -237,7 +253,9 @@ def write_header(header):
 
     return ("\033[%dG" % (c))
 
+
 invalidate = False
+
 
 def print_h(header, s, character, text='', in_place=False):
     global g_debug_header
@@ -254,7 +272,7 @@ def print_h(header, s, character, text='', in_place=False):
         text = text.strip()
 
     out = ""
-    if header!='':
+    if header != '':
         out += str(header)
         out += ": "
 
@@ -272,7 +290,7 @@ def print_h(header, s, character, text='', in_place=False):
     else:
         n = s / 2
 
-    if (math.ceil(n)!=n):
+    if (math.ceil(n) != n):
         carry = 1
     else:
         carry = 0
@@ -298,7 +316,7 @@ def print_h(header, s, character, text='', in_place=False):
     if (not in_place):
         sys.stdout.write("\n")
     else:
-        invalidate=True
+        invalidate = True
 
     sys.stdout.flush()
     vt_lock.release()
@@ -306,36 +324,46 @@ def print_h(header, s, character, text='', in_place=False):
     last_refresh = get_timestamp()
     return out
 
-def _(s): return s.encode('utf-8').decode('unicode_escape');
+
+def _(s):
+    return s.encode('utf-8').decode('unicode_escape')
+
 
 ESC = '\u001B['
-cursorSavePosition = _(ESC + ('s'));
-cursorRestorePosition = _(ESC + ('u'));
-eraseLine = _(ESC + '2K');
+cursorSavePosition = _(ESC + ('s'))
+cursorRestorePosition = _(ESC + ('u'))
+eraseLine = _(ESC + '2K')
 
-def cursorTo(x, y = None):
-  return _(ESC + str(y + 1) + ';' + str(x + 1) + 'H');
+
+def cursorTo(x, y=None):
+    return _(ESC + str(y + 1) + ';' + str(x + 1) + 'H')
+
 
 def print_xy(x, y, text='', color=bcolors.OKBLUE):
     global last_refresh
 
     elapsed = get_timestamp() - last_refresh
-    if elapsed<=2:
+    if elapsed <= 2:
         return
 
     # We cancel the autorefresh in the terminal if there were no regular prints in x minutes
     if elapsed > 60:
         TERM_WIDTH = -1
 
-    sys.stdout.write(cursorSavePosition + cursorTo(x,y) + color + text + bcolors.ENDC + cursorRestorePosition)
+    sys.stdout.write(cursorSavePosition + cursorTo(x, y) + color + text +
+                     bcolors.ENDC + cursorRestorePosition)
     sys.stdout.flush()
+
 
 def print_xy_slot(slot, y, text='', color=bcolors.OKBLUE):
     print_xy(slot * DIS_WIDE, y, text, color)
 
+
 def erase_line(y):
-    sys.stdout.write(cursorSavePosition + cursorTo(1,y) + eraseLine + cursorRestorePosition)
+    sys.stdout.write(cursorSavePosition + cursorTo(1, y) + eraseLine +
+                     cursorRestorePosition)
     sys.stdout.flush()
+
 
 def print_h1(slot, text='', in_place=False):
     global g_debug_header, invalidate
@@ -345,17 +373,18 @@ def print_h1(slot, text='', in_place=False):
     if invalidate and not in_place:
         sys.stdout.write("\n")
         sys.stdout.flush()
-        invalidate=False
+        invalidate = False
 
     sys.stdout.write(bcolors.WARNING)
-    get_logger(slot, text).info(get_tm() + bcolors.WARNING +
-        print_h(slot, 28, "#", text, in_place) + bcolors.ENDC)
+    get_logger(
+        slot, text).info(get_tm() + bcolors.WARNING +
+                         print_h(slot, 28, "#", text, in_place) + bcolors.ENDC)
     sys.stdout.write(bcolors.ENDC)
 
 
-def print_invalidate(forced = False):
+def print_invalidate(forced=False):
     elapsed = get_timestamp() - last_refresh
-    if elapsed<2 or elapsed>600:
+    if elapsed < 2 or elapsed > 600:
         return
 
     for y in range(10):
@@ -369,6 +398,7 @@ def print_b(slot, text=''):
 
     print_tx(slot, text)
 
+
 def print_e(slot, text=''):
     global g_debug_header
     if g_debug_header and g_debug_header != slot:
@@ -376,11 +406,13 @@ def print_e(slot, text=''):
 
     sys.stdout.write(bcolors.FAIL)
     get_logger(slot, text).error(get_tm() + bcolors.FAIL +
-                           print_h(slot, 30, "!", text) + bcolors.ENDC)
+                                 print_h(slot, 30, "!", text) + bcolors.ENDC)
     sys.stdout.write(bcolors.ENDC)
+
 
 def print_r(slot, text=''):
     return print_e(slot, text)
+
 
 def print_ce(slot, text=''):
     global g_debug_header
@@ -388,7 +420,8 @@ def print_ce(slot, text=''):
         return
 
     sys.stdout.write(bcolors.OKBLUE)
-    get_logger(slot, text).error(get_tm() + bcolors.OKBLUE +
+    get_logger(slot,
+               text).error(get_tm() + bcolors.OKBLUE +
                            print_h(slot, 35, " ", text.upper()) + bcolors.ENDC)
     sys.stdout.write(bcolors.ENDC)
 
@@ -401,7 +434,7 @@ def print_tx(slot, text='', log=True, MAX_TEXT_SIZE=80, in_place=False):
     vt_lock.acquire()
     sys.stdout.write(bcolors.OKBLUE)
 
-    if text!='':
+    if text != '':
         sys.stdout.write(write_header(slot))
     else:
         text = slot
@@ -410,7 +443,7 @@ def print_tx(slot, text='', log=True, MAX_TEXT_SIZE=80, in_place=False):
 
     if (log):
         get_logger(slot, text).info(get_tm() + bcolors.OKBLUE + "%s: %s" %
-                              (str(slot), text) + bcolors.ENDC)
+                                    (str(slot), text) + bcolors.ENDC)
 
     sys.stdout.write("%s: %s" % (slot, text))
     if not in_place:
@@ -425,7 +458,8 @@ def print_h2(slot, text='', in_place=False):
     if g_debug_header and g_debug_header != slot:
         return
 
-    get_logger(slot, text).info(get_tm() + print_h(slot, 30, "*", text, in_place))
+    get_logger(slot,
+               text).info(get_tm() + print_h(slot, 30, "*", text, in_place))
 
 
 def print_h3(slot, text='', in_place=False):
@@ -433,7 +467,8 @@ def print_h3(slot, text='', in_place=False):
     if g_debug_header and g_debug_header != slot:
         return
 
-    get_logger(slot, text).info(get_tm() + print_h(slot, 25, "-", text, in_place))
+    get_logger(slot,
+               text).info(get_tm() + print_h(slot, 25, "-", text, in_place))
 
 
 def print_h4(slot, text='', in_place=False):
@@ -441,7 +476,8 @@ def print_h4(slot, text='', in_place=False):
     if g_debug_header and g_debug_header != slot:
         return
 
-    get_logger(slot, text).info(get_tm() + print_h(slot, 20, "+", text, in_place))
+    get_logger(slot,
+               text).info(get_tm() + print_h(slot, 20, "+", text, in_place))
 
 
 def print_h5(slot, text='', in_place=False):
@@ -449,7 +485,8 @@ def print_h5(slot, text='', in_place=False):
     if g_debug_header and g_debug_header != slot:
         return
 
-    get_logger(slot, text).info(get_tm() + print_h(slot, 20, "-", text, in_place))
+    get_logger(slot,
+               text).info(get_tm() + print_h(slot, 20, "-", text, in_place))
 
 
 def print_alert(slot, text=''):
@@ -459,15 +496,17 @@ def print_alert(slot, text=''):
 
     print("")
     sys.stdout.write(bcolors.HEADER)
-    if text!='':
-        get_logger(slot, text).error(get_tm() + bcolors.HEADER +
-                            print_h(slot, 40, "%", " ") + bcolors.ENDC)
+    if text != '':
+        get_logger(slot,
+                   text).error(get_tm() + bcolors.HEADER +
+                               print_h(slot, 40, "%", " ") + bcolors.ENDC)
 
     get_logger(slot, text).error(get_tm() + bcolors.HEADER +
-                           print_h(slot, 40, "%", text) + bcolors.ENDC)
+                                 print_h(slot, 40, "%", text) + bcolors.ENDC)
 
-    if text!='':
-        get_logger(slot, text).error(get_tm() + bcolors.HEADER +
+    if text != '':
+        get_logger(slot,
+                   text).error(get_tm() + bcolors.HEADER +
                                print_h(slot, 40, "%", " ") + bcolors.ENDC)
     print("")
     sys.stdout.write(bcolors.ENDC)
@@ -505,25 +544,27 @@ def split_tmpinto_len(s, l=2):
     # return [s[i:i+l] for i in range(0, len(s), l)]
 
 
-def get_response_error(slot, error, data= {}):
+def get_response_error(slot, error, data={}):
     # logging.error("%s: %s" %(slot, error))
     # print("!!!!!!!! ERROR %d [%s] !!!!!!" %(slot, error))
-    return {"id": slot,
-            "error": error,
-            "status": "Error",
-            "data": data,
-            "ok": 0
-            }
+    return {
+        "id": slot,
+        "error": error,
+        "status": "Error",
+        "data": data,
+        "ok": 0
+    }
 
 
 def get_response_success(slot, result):
     # logging.info("%s: %s" %(slot, result))
     # print("*********** SUCCESS %d [%s] *********** " %(slot, result))
-    return {"id": slot,
-            "status": "success",
-            "result": result,
-            "ok": 1,
-            }
+    return {
+        "id": slot,
+        "status": "success",
+        "result": result,
+        "ok": 1,
+    }
 
 
 def get_last_file_time(file_name):
@@ -535,9 +576,10 @@ def get_last_file_time(file_name):
         return -1
 
 
-TERM_WIDTH=-1
-TERM_HEIGHT=-1
+TERM_WIDTH = -1
+TERM_HEIGHT = -1
 init_terminal = False
+
 
 def terminal_update():
     global TERM_WIDTH, TERM_HEIGHT, DIS_WIDE, init_terminal
@@ -545,18 +587,18 @@ def terminal_update():
     try:
         width, height = shutil.get_terminal_size((250, 40))
 
-        if width==TERM_WIDTH and height==TERM_HEIGHT:
-            DIS_WIDE = math.floor((width - 25)/9)
+        if width == TERM_WIDTH and height == TERM_HEIGHT:
+            DIS_WIDE = math.floor((width - 25) / 9)
             return
 
         if init_terminal and TERM_WIDTH != -1 and width != 317:
-        #    vt_clear()
+            #    vt_clear()
             init_terminal = False
 
-        TERM_WIDTH=width
-        TERM_HEIGHT=height
+        TERM_WIDTH = width
+        TERM_HEIGHT = height
 
-        DIS_WIDE = math.floor((TERM_WIDTH - 25)/9)
+        DIS_WIDE = math.floor((TERM_WIDTH - 25) / 9)
 
         if not init_terminal:
             print(" TERMINAL " + str(TERM_WIDTH) + "," + str(TERM_HEIGHT))
@@ -564,7 +606,7 @@ def terminal_update():
 
         init_terminal = True
     except Exception as err:
-        print(" Failed Terminal update ");
+        print(" Failed Terminal update ")
+
 
 terminal_update()
-
